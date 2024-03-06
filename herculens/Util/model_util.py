@@ -188,6 +188,28 @@ def draw_samples_from_covariance(mean, covariance, num_samples=10000, seed=None)
 
 def critical_lines_caustics(lens_image, kwargs_lens, supersampling=5, 
                             return_lens_centers=False):
+    ''' Compute critical lines and caustics for a given lens model.
+
+    Parameters
+    ----------
+    lens_image : LensImage
+        LensImage instance containing the lens model.
+    kwargs_lens : list of dict
+        List of keyword arguments of lens model parameters.
+    supersampling : int, optional
+        Factor by which to increase the resolution of the grid.
+    return_lens_centers : bool, optional
+        Whether to return the lens components centroids.
+
+    Returns
+    -------
+    crit_lines : list of tuple
+        List of critical lines, each represented as a tuple of (x, y) coordinates.
+    caustics : list of tuple
+        List of caustics, each represented as a tuple of (x, y) coordinates.
+    lens_centers : tuple
+        Tuple of (x, y) coordinates of the lens components centroids. (Only if return_lens_centers is True.)
+    '''
     if config.read('jax_enable_x64') is not True:
         print("WARNING: JAX's 'jax_enable_x64' is not enabled; "
               "computation of critical lines and caustics might be inaccurate.")

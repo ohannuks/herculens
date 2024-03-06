@@ -23,8 +23,8 @@ class MassModel(MassModelBase):
 
         Parameters
         ----------
-        mass_model_list : list of str
-            Lens model profile names.
+        mass_model_list : list of str or class (or a mix of both)
+            Lens model profile names or classes.
         kwargs_pixelated : dictionary for settings related to PIXELATED profiles.
         """
         self.profile_type_list = mass_model_list

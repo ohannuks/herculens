@@ -35,8 +35,8 @@ class MassModelBase(object):
 
         Parameters
         ----------
-        lens_model_list : list of str
-            Lens model profile types.
+        lens_model_list : list of str or class (or a mix of both)
+            Lens model profile types or classes.
 
         """
         self.func_list, self._pix_idx = self._load_model_instances(
@@ -44,11 +44,21 @@ class MassModelBase(object):
             no_complex_numbers, kwargs_pixel_grid_fixed
         )
         self._num_func = len(self.func_list)
-        self._model_list = lens_model_list
+        self._model_list = self.create_model_list(lens_model_list)
         if kwargs_pixelated is None:
             kwargs_pixelated = {}
         self._kwargs_pixelated = kwargs_pixelated
         
+    def create_model_list(self, lens_model_list):
+        for i in range(len(lens_model_list)):
+            if isinstance(lens_model_list[i], type):
+                lens_model_list[i] = lens_model_list[i].__name__
+            elif isinstance(lens_model_list[i], str):
+                pass
+            else:
+                raise ValueError("lens_model_list must be a list of strings or classes")
+        return lens_model_list
+
     def _load_model_instances(self, 
             lens_model_list, pixel_derivative_type, pixel_interpol, 
             no_complex_numbers, kwargs_pixel_grid_fixed,
@@ -108,6 +118,9 @@ class MassModelBase(object):
             if kwargs_pixel_grid_fixed is None:
                 raise ValueError("At least one pixel grid must be provided to use 'PIXELATED_FIXED' profile")
             return pixelated.PixelatedFixed(**kwargs_pixel_grid_fixed)
+        # Check if the lens is actually a class instead of a string
+        elif isinstance(lens_type, type):
+            return lens_type()
         else:
             err_msg = (f"{lens_type} is not a valid lens model. " +
                        f"Supported types are {SUPPORTED_MODELS}")
